@@ -9,12 +9,14 @@ public class Book {
     String name;
     int year;
     String genre;
+    int coverID;
 
-    public Book(String author,  String name, String genre, int year) {
+    public Book(String author,  String name, String genre, int year, int coverID) {
         this.author = author;
         this.genre = genre;
         this.name = name;
         this.year = year;
+        this.coverID = coverID;
     }
 
     @Override
