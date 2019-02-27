@@ -1,7 +1,12 @@
 package com.example.admin215.mylibrary;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -13,10 +18,51 @@ public class MainActivity extends AppCompatActivity {
     LinkedList <Book> listBooks = new LinkedList<Book>();
    // ArrayAdapter <Book> adapter;
     ListView listView;
+    OpenHelper dbHelper;
+    SQLiteDatabase sdb;
+    public static final String DATABASE_NAME = "mylibrary.db";
+    public static final Integer DATABASE_VERSION = 1;
+
+    EditText title, author, year, genre;
+    Button saveButton, showAllButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        title = (EditText) findViewById(R.id.title_book);
+        author = (EditText) findViewById(R.id.author_book);
+        year = (EditText) findViewById(R.id.year_book);
+        genre = (EditText) findViewById(R.id.genre_book);
+        saveButton = (Button) findViewById(R.id.save_button);
+        showAllButton = (Button) findViewById(R.id.show_all);
+
+        dbHelper = new OpenHelper(getBaseContext(), DATABASE_NAME, null, DATABASE_VERSION);
+
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!title.getText().toString().equals("")) {
+                    sdb = dbHelper.getWritableDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put(OpenHelper.TITLE_COLUMN, title.getText().toString());
+                    values.put(OpenHelper.AUTHOR_COLUMN, author.getText().toString());
+                    values.put(OpenHelper.GENRE_COLUMN, genre.getText().toString());
+                    values.put(OpenHelper.YEAR_COLUMN, Integer.parseInt(year.getText().toString()));
+                    sdb.insert(OpenHelper.TABLENAME, null, values);
+                    sdb.close();
+                    title.setText("");
+                    author.setText("");
+                    year.setText("");
+                    genre.setText("");
+                } else {
+                    title.setText("Впишите название!!!");
+                }
+            }
+        });
+
+
         listBooks.add(new Book("Oruell", "1984", "Antiutopiya", 1992, R.drawable.oruell));
         listBooks.add(new Book("Freid", "История фобий пятилетнего мальчика", "Психология, научная " +
                                 "литература", 1955, R.drawable.fraid));
